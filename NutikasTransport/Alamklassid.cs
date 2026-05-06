@@ -10,7 +10,7 @@ namespace NutikasTransport
         {
             if (KutuseTase <= 0) { Console.WriteLine("Aku on tühi!"); return; }
             AlustaSoitu();
-            Kiirenda(60); // Demonstreerime kiirendamist
+            Kiirenda(60);
             ArvutaKulu(km);
             RegistreeriSoit(km);
             Console.WriteLine($"{Mark} suriseb teel. Aku jääk: {Math.Round(KutuseTase, 1)}%");
