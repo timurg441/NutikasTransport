@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace NutikasTransport
 {
     public abstract class Soiduk : ILiigub
     {
-        // Väljad vastavalt ülesandele
         public string Mark { get; protected set; }
-        public double Kiirus { get; set; }
+        public double Kiirus { get; protected set; }
         private double kutuseTase;
 
-        // Üldine statistika kogu pargi kohta (Static)
         public static double KokkuLabitudKM { get; private set; }
         public static List<string> SoiduLogi = new List<string>();
 
-        // Valideerimine: kütus peab jääma vahemikku 0-100%
         public double KutuseTase
         {
             get => kutuseTase;
@@ -27,34 +25,42 @@ namespace NutikasTransport
             KutuseTase = algKutus;
             Kiirus = 0;
         }
-
-        // Meetodid kiiruse muutmiseks
-        public void Kiirenda(double lisa) => Kiirus += lisa;
-        public void Pidurda(double vahem) => Kiirus = Math.Max(0, Kiirus - vahem);
-
-        // Abstraktne kuluarvutus, mida iga alamklass täidab erinevalt
-        public abstract void ArvutaKulu(double km);
-
-        // Meetod kütuse lisamiseks
         public void Tangi()
         {
             KutuseTase = 100;
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\n[INFO]: {Mark} on nüüd täis laetud/tangitud.");
+            Console.WriteLine($"\n[INFO]: {Mark} on nüüd täis laetud/tangitud (100%).");
             Console.ResetColor();
         }
 
-        // Liidese meetodite realiseerimine
+        public void Kiirenda(double lisa)
+        {
+            Kiirus += lisa;
+            Console.WriteLine($"[LOGI]: {Mark} kiirendab... Hetkekiirus: {Kiirus} km/h");
+        }
+
+        public void Pidurda(double vahem)
+        {
+            Kiirus = Math.Max(0, Kiirus - vahem);
+            Console.WriteLine($"[LOGI]: {Mark} pidurdab... Hetkekiirus: {Kiirus} km/h");
+        }
+
+        public abstract void ArvutaKulu(double km);
+
         public void AlustaSoitu()
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine($"\n[SÜSTEEM]: {Mark} mootor käivitati.");
+            Console.WriteLine($"\n[SÜSTEEM]: {Mark} mootor käivitatud. Alustame liikumist...");
             Console.ResetColor();
+            Thread.Sleep(800);
         }
 
-        public void PeataSoit() => Console.WriteLine($"[SÜSTEEM]: {Mark} jõudis sihtkohta ja peatus.");
+        public void PeataSoit()
+        {
+            Pidurda(Kiirus);
+            Console.WriteLine($"[SÜSTEEM]: Sihtkoht käes. {Mark} seisab.");
+        }
 
-        // Statistika uuendamine
         protected void RegistreeriSoit(double km)
         {
             KokkuLabitudKM += km;
@@ -63,14 +69,12 @@ namespace NutikasTransport
 
         public abstract void Liigu(double km);
 
-        // Staatiline meetod statistika kuvamiseks
         public static void KuvaPargiStatistika()
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine("\n--- PARGI ÜLDSTATISTIKA ---");
-            Console.WriteLine($"Kõik masinad kokku läbinud: {KokkuLabitudKM} km");
-            Console.WriteLine($"Tehtud sõitude arv: {SoiduLogi.Count}");
-            if (SoiduLogi.Count > 0) Console.WriteLine("Viimane sõit: " + SoiduLogi[SoiduLogi.Count - 1]);
+            Console.WriteLine("\n--- PARGI ÜLDSTATISTIKA (V 3.0) ---");
+            Console.WriteLine($"Läbitud vahemaa kokku: {KokkuLabitudKM} km");
+            Console.WriteLine($"Sõitude ajalugu: {SoiduLogi.Count} kirjet");
             Console.ResetColor();
         }
     }
