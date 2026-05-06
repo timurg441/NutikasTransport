@@ -25,6 +25,7 @@ namespace NutikasTransport
             KutuseTase = algKutus;
             Kiirus = 0;
         }
+
         public void Tangi()
         {
             KutuseTase = 100;
@@ -68,13 +69,13 @@ namespace NutikasTransport
         }
 
         public abstract void Liigu(double km);
-
         public static void KuvaPargiStatistika()
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine("\n--- PARGI ÜLDSTATISTIKA (V 3.0) ---");
+            Console.WriteLine("\n--- PARGI ÜLDSTATISTIKA ---");
             Console.WriteLine($"Läbitud vahemaa kokku: {KokkuLabitudKM} km");
             Console.WriteLine($"Sõitude ajalugu: {SoiduLogi.Count} kirjet");
+            foreach (var log in SoiduLogi) Console.WriteLine($" > {log}");
             Console.ResetColor();
         }
     }
